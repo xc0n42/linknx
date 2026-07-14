@@ -12,13 +12,7 @@ aclocal.m4
 config.status
 .dirstamp
 Makefile.in
+*.m4
 .*.sw?
 tags
 vimrc*
-.vscode
-.idea
-ssl/
-vendor/
-node_modules/
-log/
-.DS_Store
