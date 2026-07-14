@@ -244,6 +244,44 @@ if test x"$WITH_LUA" != xno ; then
 fi
 
 dnl #########################################################################
+dnl Check if using mosquitto
+dnl #########################################################################
+
+AC_ARG_WITH(mqtt, AS_HELP_STRING([--with-mqtt],[Enable MQTT support]),
+[WITH_MQTT=$withval],[WITH_MQTT=auto])
+
+if test x"$WITH_MQTT" != xno ; then
+  # try pkgconfig
+  if test x"$WITH_MQTT" = xyes ; then
+    MQTTPC=mqtt
+  elif test x"$WITH_MQTT" = xauto ; then
+    MQTTPC=mqtt
+  else
+    MQTTPC=$WITH_MQTT
+  fi
+
+  PKG_CHECK_MODULES([MQTT], "$MQTTPC" >= 2.1, [
+    AC_DEFINE([HAVE_MQTT], [1], [libmosquitto])
+     AC_DEFINE([HAVE_MQTT_H], [1], [mosquitto.h])
+     AC_SUBST(MQTT_CFLAGS)
+     AC_SUBST(MQTT_LIBS)
+     found_mqtt=yes
+  ],[
+    PKG_CHECK_MODULES([MQTT], "$MQTTPC"2.1 >= 2.1, [
+      AC_DEFINE([HAVE_MQTT], [1], [libmosquitto])
+      AC_DEFINE([HAVE_MQTT_H], [1], [mosquitto.h])
+      AC_SUBST(MQTT_CFLAGS)
+      AC_SUBST(MQTT_LIBS)
+      found_mqtt=yes
+    ],[
+      AC_MSG_RESULT([no])
+    ])
+  ])
+fi
+AM_CONDITIONAL([MQTT], [test x"$found_mqtt" = xyes])
+
+
+dnl #########################################################################
 dnl Check if using jsoncpp
 dnl #########################################################################
 
