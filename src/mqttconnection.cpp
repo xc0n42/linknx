@@ -56,7 +56,7 @@ void MqttConnection::importXml(ticpp::Element* pConfig)
                               << ", prefix=" << prefix_m << endlog;
     }
     catch (ticpp::Exception& ex) {
-        logger_m.errorStream() << "Error parsing MQTT configuration: " << ex.what() << endlog;
+        logger_m.errorStream() << "Error parsing MQTT configuration: " << ex.m_details << endlog;
         throw;
     }
 }
