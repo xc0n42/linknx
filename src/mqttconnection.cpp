@@ -43,16 +43,22 @@ MqttConnection::~MqttConnection()
 
 void MqttConnection::importXml(ticpp::Element* pConfig)
 {
-    url_m = pConfig->GetAttribute("url");
-    std::string portStr = pConfig->GetAttribute("port");
-    port_m = atoi(portStr.c_str());
-    username_m = pConfig->GetAttribute("username");
-    password_m = pConfig->GetAttribute("password");
-    prefix_m = pConfig->GetAttribute("prefix");
+    try {
+        url_m = pConfig->GetAttribute("url");
+        std::string portStr = pConfig->GetAttribute("port");
+        port_m = atoi(portStr.c_str());
+        username_m = pConfig->GetAttribute("username");
+        password_m = pConfig->GetAttribute("password");
+        prefix_m = pConfig->GetAttribute("prefix");
 
-    logger_m.infoStream() << "MQTT configuration loaded: url=" << url_m
-                          << ", port=" << port_m
-                          << ", prefix=" << prefix_m << endlog;
+        logger_m.infoStream() << "MQTT configuration loaded: url=" << url_m
+                              << ", port=" << port_m
+                              << ", prefix=" << prefix_m << endlog;
+    }
+    catch (ticpp::Exception& ex) {
+        logger_m.errorStream() << "Error parsing MQTT configuration: " << ex.what() << endlog;
+        throw;
+    }
 }
 
 void MqttConnection::exportXml(ticpp::Element* pConfig)
