@@ -253,28 +253,37 @@ AC_ARG_WITH(mqtt, AS_HELP_STRING([--with-mqtt],[Enable MQTT support]),
 if test x"$WITH_MQTT" != xno ; then
   # try pkgconfig
   if test x"$WITH_MQTT" = xyes ; then
-    MQTTPC=mqtt
+    MQTTPC=libmosquitto
   elif test x"$WITH_MQTT" = xauto ; then
-    MQTTPC=mqtt
+    MQTTPC=libmosquitto
   else
     MQTTPC=$WITH_MQTT
   fi
 
-  PKG_CHECK_MODULES([MQTT], "$MQTTPC" >= 2.1, [
+  PKG_CHECK_MODULES([MQTT], "$MQTTPC" >= 2.0, [
     AC_DEFINE([HAVE_MQTT], [1], [libmosquitto])
      AC_DEFINE([HAVE_MQTT_H], [1], [mosquitto.h])
      AC_SUBST(MQTT_CFLAGS)
      AC_SUBST(MQTT_LIBS)
      found_mqtt=yes
   ],[
-    PKG_CHECK_MODULES([MQTT], "$MQTTPC"2.1 >= 2.1, [
+    dnl Fallback module names used by some distributions/packages
+    PKG_CHECK_MODULES([MQTT], [libmosquitto >= 2.0], [
       AC_DEFINE([HAVE_MQTT], [1], [libmosquitto])
       AC_DEFINE([HAVE_MQTT_H], [1], [mosquitto.h])
       AC_SUBST(MQTT_CFLAGS)
       AC_SUBST(MQTT_LIBS)
       found_mqtt=yes
     ],[
-      AC_MSG_RESULT([no])
+      PKG_CHECK_MODULES([MQTT], [mosquitto >= 2.0], [
+        AC_DEFINE([HAVE_MQTT], [1], [libmosquitto])
+        AC_DEFINE([HAVE_MQTT_H], [1], [mosquitto.h])
+        AC_SUBST(MQTT_CFLAGS)
+        AC_SUBST(MQTT_LIBS)
+        found_mqtt=yes
+      ],[
+        AC_MSG_RESULT([no])
+      ])
     ])
   ])
 fi

@@ -26,6 +26,7 @@
 #include <sstream>
 #include <iomanip>
 #include <cstring>
+#include <cstdlib>
 
 Logger& MqttConnection::logger_m(Logger::getInstance("MqttConnection"));
 
@@ -43,7 +44,8 @@ MqttConnection::~MqttConnection()
 void MqttConnection::importXml(ticpp::Element* pConfig)
 {
     url_m = pConfig->GetAttribute("url");
-    port_m = pConfig->GetAttribute<int>("port");
+    std::string portStr = pConfig->GetAttribute("port");
+    port_m = atoi(portStr.c_str());
     username_m = pConfig->GetAttribute("username");
     password_m = pConfig->GetAttribute("password");
     prefix_m = pConfig->GetAttribute("prefix");
